@@ -1,0 +1,32 @@
+query GetTeam {
+  getTeam {
+    id
+    name
+  }
+}
+
+mutation CaptureEmail($email: String!) {
+  captureEmail(email: $email) {
+    id
+    email
+  }
+}
+mutation Signup($email: String!, $firstname: String!, $lastname: String!, $password: String!) {
+  signup(email: $email, firstname: $firstname, lastname: $lastname, password: $password) {
+    token
+    user {
+      id
+      email
+    }
+  }
+}
+mutation Login($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    token
+    user {
+      id
+      email
+    }
+  }
+}
+

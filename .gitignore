@@ -1,0 +1,5 @@
+server/src/node_modules
+server/src/.env
+client/node_modules
+client/npm_debug.log
+client/.env.development

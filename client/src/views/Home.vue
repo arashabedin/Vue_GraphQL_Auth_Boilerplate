@@ -6,6 +6,8 @@
     <el-main>
       <div class="container-center">
         <h2>Welcome!</h2>
+            <sui-button content="Pause" icon="pause" label-position="left" />
+
         <button @click="goToSignUp"> Create a New Account </button>
       </div>
     </el-main>

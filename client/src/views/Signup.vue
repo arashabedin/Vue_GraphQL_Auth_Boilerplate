@@ -10,7 +10,7 @@
 
         <el-form ref="form" :model="form">
           <el-form-item>
-              <label>Email</label>
+            <label>Email</label>
             <el-input v-model="form.email" placeholder="Your email"></el-input>
             <label>First name</label>
             <el-input v-model="form.firstname" placeholder="Your first name"></el-input>
@@ -20,7 +20,10 @@
             <el-input v-model="form.password" type="password" placeholder="Password"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="signup">Complete</el-button>
+            <div id="signup-submit" @click="signup" class="ui big green labeled icon button">
+              <i class="check icon"></i>
+              Sign up
+            </div>
           </el-form-item>
         </el-form>
       </div>
@@ -30,6 +33,7 @@
 
 <script>
 import { Signup } from "../constants/query.gql";
+import Auth from "../modules/Auth.js";
 export default {
   data() {
     return {
@@ -44,7 +48,7 @@ export default {
   methods: {
     async signup() {
       this.$apollo.provider.clients.defaultClient.cache.reset();
-      const { email,firstname, lastname, password } = this.form;
+      const { email, firstname, lastname, password } = this.form;
       if (!(email && firstname && lastname && password)) {
         this.error = "Please complete the form";
         return;
@@ -62,28 +66,28 @@ export default {
         .then(({ data: { signup } }) => {
           const id = signup.user.id;
           const token = signup.token;
-          this.saveUserData(id, token);
+          Auth.authenticateUser(id, token);
+          this.$root.$data.userId = id;
           this.$router.push({ name: "dashboard" });
         })
         .catch(error => {
-          if(error){
-          this.error = error;
-          console.log(error);
-          }else{
-           this.error = "Registration Succeed. Please confirm your email, via the link we've sent to your email";
+          if (error) {
+            this.error = error;
+            console.log(error);
+          } else {
+            this.error =
+              "Registration Succeed. Please confirm your email, via the link we've sent to your email";
           }
         });
-    },
-      saveUserData (id, token) {
-      localStorage.setItem('user-id', id)
-      localStorage.setItem('user-token', token)
-      this.$root.$data.userId = localStorage.getItem('user-id')
-    },
+    }
   }
 };
 </script>
 
 <style scoped>
+#signup-submit {
+  width: 100%;
+}
 .el-button {
   width: 100%;
 }

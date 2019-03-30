@@ -1,15 +1,12 @@
 <template>
   <el-container>
-    <el-header>
-    </el-header>
+    <el-header></el-header>
 
     <el-main>
       <div class="container-center">
         <h2>Log in</h2>
-        
-        <div v-if="error" class="error">
-          {{ error }}
-        </div>
+
+        <div v-if="error" class="error">{{ error }}</div>
 
         <el-form ref="form" :model="form">
           <el-form-item>
@@ -19,64 +16,76 @@
             <el-input v-model="form.password" type="password" placeholder="Password"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="login">Log in</el-button>
+            <div @click="login" id="signin-button" class="ui big blue labeled icon button">
+              <i class="sign-in icon"></i>
+              Sign In
+            </div>
           </el-form-item>
         </el-form>
 
         <div>
           <span>Don't have an account?</span>
-          <router-link :to="{name: 'home'}" class="link">Create an account</router-link>
+          <div  @click="goToSignUp" id="signup-button" class="ui big green labeled icon button">
+            <i class="signup icon"></i>
+            Create an account
+          </div>
         </div>
       </div>
-
     </el-main>
   </el-container>
-
 </template>
 
 <script>
-import { Login } from '../constants/query.gql'
+import { Login } from "../constants/query.gql";
+import Auth from "../modules/Auth.js";
+
 export default {
   data() {
     return {
       error: false,
       form: {
-        email: '',
-        password: '',
+        email: "",
+        password: ""
       }
-    }
+    };
   },
   methods: {
-  async login() {
-    this.$apollo.provider.clients.defaultClient.cache.reset()
-const { email, password } = this.form
-    if (email && password) {
-      this.$apollo.mutate({
-        mutation: Login,
-        variables: { email, password }
-      }).then(async (data) => {
-        const login = data.data.login
-        const id = login.user.id
-        const token = login.token
-        this.saveUserData(id, token)
-        this.$router.push({name: 'dashboard'})
-      }).catch((error) => {
-        this.error = 'Invalid email or password'
-        console.log(error)
-      })
-    }
-  },
-    saveUserData (id, token) {
-      localStorage.setItem('user-id', id)
-      localStorage.setItem('user-token', token)
-      this.$root.$data.userId = localStorage.getItem('user-id')
+    async goToSignUp() {
+      this.$router.push({ name: "signup" });
     },
+    async login() {
+      this.$apollo.provider.clients.defaultClient.cache.reset();
+      const { email, password } = this.form;
+      if (email && password) {
+        this.$apollo
+          .mutate({
+            mutation: Login,
+            variables: { email, password }
+          })
+          .then(async data => {
+            const login = data.data.login;
+            const id = login.user.id;
+            const token = login.token;
+            Auth.authenticateUser(id, token);
+            this.$router.push({ name: "dashboard" });
+          })
+          .catch(error => {
+            this.error = "Invalid email or password";
+            console.log(error);
+          });
+      }
+    }
   }
-}
+};
 </script>
 
 <style scoped>
 .el-button {
   width: 100%;
+}
+#signup-button,
+#signin-button {
+  width: 100%;
+  margin-top: 20px;
 }
 </style>

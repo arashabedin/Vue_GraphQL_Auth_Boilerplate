@@ -7,6 +7,7 @@ import { HttpLink } from 'apollo-link-http'
 import { enableExperimentalFragmentVariables } from 'graphql-tag'
 import VueApollo from 'vue-apollo'
 import ElementUI from 'element-ui'
+import SuiVue from 'semantic-ui-vue';
 
 import App from './App.vue'
 import router from './router'
@@ -14,8 +15,10 @@ import store from './store'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/style.scss'
+import 'semantic-ui-css/semantic.min.css';
 
 Vue.use(ElementUI)
+Vue.use(SuiVue);
 
 Vue.config.productionTip = false
 
@@ -33,6 +36,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     )
   if (networkError) console.log(`[Network error]: ${networkError}`)
 })
+
 const authMiddleware = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem('user-token')
   operation.setContext({
